@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class UserRepository {
@@ -29,10 +28,6 @@ public class UserRepository {
 
     public User getUser(Long id) {
         return findUserById(id);
-    }
-
-    public List<User> getAllUsers() {
-        return users;
     }
 
     public boolean deleteUser(Long id) {
