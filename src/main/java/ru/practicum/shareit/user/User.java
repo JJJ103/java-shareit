@@ -10,7 +10,6 @@ import lombok.Data;
  */
 @Data
 public class User {
-    @NotNull
     private Long id;
     private String name; // Имя или логин пользователя
     @Email
