@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.Collections;
 import java.util.List;
 
 /**

@@ -38,8 +38,19 @@ public class ItemRepository {
     }
 
     public List<Item> searchItems(String text) {
+        if (text == null || text.isBlank()) {
+            return List.of(); // Возвращаем пустой список
+        }
+
         return items.stream()
-                .filter(item -> (item.getName().contains(text) || item.getDescription().contains(text)) && item.isAvailable())
+                .filter(item -> {
+                    String itemName = item.getName() != null ? item.getName().toLowerCase() : "";
+                    String itemDescription = item.getDescription() != null ? item.getDescription().toLowerCase() : "";
+                    String searchText = text.toLowerCase();
+
+                    return itemName.contains(searchText) || itemDescription.contains(searchText);
+                })
+                .filter(Item::isAvailable) // Проверяем доступность
                 .toList();
     }
 
