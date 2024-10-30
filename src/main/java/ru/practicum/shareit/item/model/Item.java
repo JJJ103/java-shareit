@@ -21,4 +21,8 @@ public class Item {
     @NotNull
     private User owner;
     private ItemRequest request; // Запрос, по которому создана вещь
+
+    public Boolean isAvailable() {
+        return available;
+    }
 }
