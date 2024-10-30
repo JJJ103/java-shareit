@@ -40,11 +40,15 @@ public class UserRepository {
     }
 
     private User findUserById(Long id) {
-        Optional<User> user = users.stream().filter(u -> u.getId().equals(id)).findFirst();
-        return user.orElse(null);
+        return users.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     protected boolean existsByEmail(String email) {
-        return users.stream().anyMatch(user -> user.getEmail().equals(email));
+        return users.stream()
+                .filter(user -> user.getEmail() != null)
+                .anyMatch(user -> user.getEmail().equals(email));
     }
 }
