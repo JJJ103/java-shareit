@@ -2,6 +2,8 @@ package ru.practicum.shareit.item;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.ForbiddenException;
+import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -37,18 +39,15 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item updateItem(Long itemId, Long userId, ItemDto itemDto) {
         Item item = itemRepository.getItem(itemId);
-        if (item == null || !item.getOwner().getId().equals(userId)) {
-            throw new IllegalArgumentException("Item not found or you are not the owner");
+        Item newItem = ItemMapper.toItem(itemDto);
+        if (item == null) {
+            throw new ItemNotFoundException();
         }
-        // Обновляем поля
-        if (itemDto.getName() != null) {
-            item.setName(itemDto.getName());
+        if (!item.getOwner().getId().equals(userId)) {
+            throw new ForbiddenException();
         }
-        if (itemDto.getDescription() != null) {
-            item.setDescription(itemDto.getDescription());
-        }
-        item.setAvailable(itemDto.getAvailable());
-        return itemRepository.updateItem(item);
+
+        return itemRepository.updateItem(itemId, newItem);
     }
 
     @Override

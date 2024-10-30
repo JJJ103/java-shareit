@@ -18,12 +18,9 @@ public class UserRepository {
 
     public User updateUser(Long id, User user) {
         User existingUser = findUserById(id);
-        if (existingUser != null) {
-            existingUser.setName(user.getName());
-            existingUser.setEmail(user.getEmail());
-            return existingUser;
-        }
-        return null;
+        existingUser.setName(user.getName());
+        existingUser.setEmail(user.getEmail());
+        return existingUser;
     }
 
     public User getUser(Long id) {
