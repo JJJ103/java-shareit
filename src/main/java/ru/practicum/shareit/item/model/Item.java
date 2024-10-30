@@ -17,7 +17,7 @@ public class Item {
     private String name;
     private String description;
     @NotNull
-    private Boolean available = true; // Доступность для аренды + значение по умолчанию
+    private Boolean available; // Доступность для аренды
     @NotNull
     private User owner;
     private ItemRequest request; // Запрос, по которому создана вещь

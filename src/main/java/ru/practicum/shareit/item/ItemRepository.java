@@ -1,11 +1,13 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class ItemRepository {
     private final List<Item> items = new ArrayList<>();
     private long itemIdCounter = 1;
