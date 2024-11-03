@@ -32,9 +32,15 @@ public class ItemRepository {
     public Item updateItem(Long itemId, Item newItem) {
         Item existingItem = findItemById(itemId);
         if (existingItem != null) {
-            existingItem.setName(newItem.getName());
-            existingItem.setDescription(newItem.getDescription());
-            existingItem.setAvailable(newItem.isAvailable());
+            if (newItem.getName() != null) {
+                existingItem.setName(newItem.getName());
+            }
+            if (newItem.getDescription() != null) {
+                existingItem.setDescription(newItem.getDescription());
+            }
+            if (newItem.isAvailable() != null) {
+                existingItem.setAvailable(newItem.isAvailable());
+            }
         }
         return existingItem;
     }
