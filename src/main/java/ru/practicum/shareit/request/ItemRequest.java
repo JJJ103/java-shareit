@@ -12,12 +12,8 @@ import java.time.LocalDateTime;
  */
 @Data
 public class ItemRequest {
-    @NotNull
     private Long id;
     private String description;
-    @NotNull
     private User requestor; // Пользователь, который запрашивает вещь
-    @NotNull
-    @PastOrPresent
     private LocalDateTime created; // Дата и время создания запроса
 }

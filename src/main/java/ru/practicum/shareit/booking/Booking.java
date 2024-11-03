@@ -12,17 +12,10 @@ import java.time.LocalDateTime;
  * TODO Sprint add-bookings.
  */
 public class Booking {
-    @NotNull
     private Long id;
-    @NotNull
-    @PastOrPresent
     private LocalDateTime start;
-    @NotNull
-    @Future
     private LocalDateTime end;
-    @NotNull
     private Item item;
-    @NotNull
     private User booker;
     private Status status = Status.WAITING; // Статус бронирования, установлено значение по умолчанию
 
