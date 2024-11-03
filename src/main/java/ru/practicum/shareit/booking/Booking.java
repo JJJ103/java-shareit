@@ -1,8 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 

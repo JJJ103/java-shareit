@@ -1,7 +1,5 @@
 package ru.practicum.shareit.request;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 import ru.practicum.shareit.user.User;
 
