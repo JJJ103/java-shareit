@@ -3,17 +3,19 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class ItemRepository {
-    private final List<Item> items = new ArrayList<>();
+    private final HashMap<Long, Item> items = new HashMap<>();
     private long itemIdCounter = 1;
 
     public Item createItem(Item item) {
         item.setId(itemIdCounter++);
-        items.add(item);
+        items.put(item.getId(), item);
         return item;
     }
 
@@ -22,16 +24,18 @@ public class ItemRepository {
     }
 
     public List<Item> getAllItemsByOwnerId(Long userId) {
-        return items.stream()
+        return items.values().stream()
                 .filter(item -> item.getOwner().getId().equals(userId))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public Item updateItem(Long itemId, Item newItem) {
         Item existingItem = findItemById(itemId);
-        existingItem.setName(newItem.getName());
-        existingItem.setDescription(newItem.getDescription());
-        existingItem.setAvailable(newItem.isAvailable());
+        if (existingItem != null) {
+            existingItem.setName(newItem.getName());
+            existingItem.setDescription(newItem.getDescription());
+            existingItem.setAvailable(newItem.isAvailable());
+        }
         return existingItem;
     }
 
@@ -40,22 +44,19 @@ public class ItemRepository {
             return List.of(); // Возвращаем пустой список
         }
 
-        return items.stream()
+        String searchText = text.toLowerCase();
+        return items.values().stream()
                 .filter(item -> {
                     String itemName = item.getName() != null ? item.getName().toLowerCase() : "";
                     String itemDescription = item.getDescription() != null ? item.getDescription().toLowerCase() : "";
-                    String searchText = text.toLowerCase();
 
                     return itemName.contains(searchText) || itemDescription.contains(searchText);
                 })
-                .filter(Item::isAvailable) // Проверяем доступность
-                .toList();
+                .filter(Item::isAvailable) //проверяем доступность
+                .collect(Collectors.toList());
     }
 
     private Item findItemById(Long id) {
-        return items.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return items.get(id);
     }
 }

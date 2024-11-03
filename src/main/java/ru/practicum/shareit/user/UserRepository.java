@@ -2,24 +2,26 @@ package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Repository
 public class UserRepository {
-    private final List<User> users = new ArrayList<>();
+    private final HashMap<Long, User> users = new HashMap<>();
     private long userIdCounter = 1;
 
     public User createUser(User user) {
         user.setId(userIdCounter++);
-        users.add(user);
+        users.put(user.getId(), user);
         return user;
     }
 
     public User updateUser(Long id, User user) {
         User existingUser = findUserById(id);
-        existingUser.setName(user.getName());
-        existingUser.setEmail(user.getEmail());
+        if (existingUser != null) {
+            existingUser.setName(user.getName());
+            existingUser.setEmail(user.getEmail());
+        }
         return existingUser;
     }
 
@@ -28,18 +30,15 @@ public class UserRepository {
     }
 
     public boolean deleteUser(Long id) {
-        return users.removeIf(user -> user.getId().equals(id));
+        return users.remove(id) != null;
     }
 
     private User findUserById(Long id) {
-        return users.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return users.get(id);
     }
 
     protected boolean existsByEmail(String email) {
-        return users.stream()
+        return users.values().stream()
                 .filter(user -> user.getEmail() != null)
                 .anyMatch(user -> user.getEmail().equals(email));
     }
