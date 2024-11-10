@@ -14,15 +14,18 @@ public class ItemDto {
     @NotBlank(message = "Поле описания предмета обязательно")
     private String description;
     @NotNull(message = "Поле доступности предмета обязательно")
-    private Boolean available; //доступность аренды
+    private Boolean available; // доступность аренды
     private Long requestId;
+    private Long id;  // Добавляем id
 
-    public ItemDto(String name, String description, Boolean available, Long requestId) {
+    public ItemDto(String name, String description, Boolean available, Long requestId, Long id) {
         this.name = name;
         this.description = description;
         this.available = available;
         this.requestId = requestId;
+        this.id = id;  // Инициализация id
     }
+
 
     public Boolean isAvailable() {
         return available;
