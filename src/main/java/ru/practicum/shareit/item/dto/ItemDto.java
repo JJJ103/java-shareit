@@ -23,4 +23,8 @@ public class ItemDto {
         this.available = available;
         this.requestId = requestId;
     }
+
+    public Boolean isAvailable() {
+        return available;
+    }
 }

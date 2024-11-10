@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
@@ -21,42 +22,55 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public Item createItem(Long userId, ItemDto itemDto) {
-        User owner = userRepository.getUser(userId);
-        if (owner == null) {
-            throw new UserNotFoundException();
-        }
+        User owner = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(owner);
-        return itemRepository.createItem(item);
+        return itemRepository.save(item);
     }
 
     @Override
+    @Transactional
     public Item updateItem(Long itemId, Long userId, ItemDto itemDto) {
-        Item item = itemRepository.getItem(itemId);
-        Item newItem = ItemMapper.toItem(itemDto);
-        if (item == null) {
-            throw new ItemNotFoundException();
-        }
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(ItemNotFoundException::new);
+
         if (!item.getOwner().getId().equals(userId)) {
             throw new ForbiddenException();
         }
 
-        return itemRepository.updateItem(itemId, newItem);
+        // Обновляем поля только при наличии новых значений
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
+        }
+        if (itemDto.isAvailable() != null) {
+            item.setAvailable(itemDto.isAvailable());
+        }
+
+        return itemRepository.save(item);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Item getItem(Long itemId) {
-        return itemRepository.getItem(itemId);
+        return itemRepository.findById(itemId)
+                .orElseThrow(ItemNotFoundException::new);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Item> getAllItems(Long userId) {
-        return itemRepository.getAllItemsByOwnerId(userId);
+        return itemRepository.findAllByOwnerId(userId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Item> searchItems(String text) {
-        return itemRepository.searchItems(text);
+        return itemRepository.searchByText(text.toLowerCase());
     }
 }
