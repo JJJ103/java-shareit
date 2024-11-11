@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(Long id, User user) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
         if (user.getEmail() != null && !user.getEmail().equals(existingUser.getEmail())
                 && userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException();
@@ -41,13 +41,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Override
     public boolean deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException("Пользователь не найден");
+            throw new UserNotFoundException();
         }
         userRepository.deleteById(id);
         return true;

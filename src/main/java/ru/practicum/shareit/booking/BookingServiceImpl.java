@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingState;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exceptions.BookingNotFoundException;
 import ru.practicum.shareit.exceptions.BookingUnavailableException;
 import ru.practicum.shareit.exceptions.ForbiddenException;
+import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -46,7 +49,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setEnd(bookingDto.getEnd());
         booking.setItem(item);
         booking.setBooker(booker);
-        booking.setStatus(Booking.Status.WAITING);
+        booking.setStatus(BookingStatus.WAITING);
 
         return bookingRepository.save(booking);
     }
@@ -55,32 +58,30 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public Booking confirmBooking(Long bookingId, Long userId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
+                .orElseThrow(BookingNotFoundException::new);
 
-        // Проверяем, что запрос подтверждает владелец вещи
         if (!booking.getItem().getOwner().getId().equals(userId)) {
-            throw new ForbiddenException("Only item owner can confirm the booking");
+            throw new ForbiddenException();
         }
 
         if (approved) {
-            booking.setStatus(Booking.Status.APPROVED);
+            booking.setStatus(BookingStatus.APPROVED);
         } else {
-            booking.setStatus(Booking.Status.REJECTED);
+            booking.setStatus(BookingStatus.REJECTED);
         }
 
-        bookingRepository.save(booking);
-        return booking;
+        return bookingRepository.save(booking);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Booking getBooking(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
+                .orElseThrow(BookingNotFoundException::new);
 
         // Проверяем, что пользователь либо автор бронирования, либо владелец вещи
         if (!booking.getBooker().getId().equals(userId) && !booking.getItem().getOwner().getId().equals(userId)) {
-            throw new ForbiddenException("User not authorized to view this booking");
+            throw new ForbiddenException();
         }
 
         return booking;
@@ -88,13 +89,38 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Booking> getAllBookings(Long userId, String state) {
-        return bookingRepository.findBookingsByUserIdAndState(userId, state);
+    public List<Booking> getAllBookings(Long userId, BookingState state) {
+        return switch (state) {
+            case CURRENT -> bookingRepository.findCurrentBookings(userId);
+            case PAST -> bookingRepository.findPastBookings(userId);
+            case FUTURE -> bookingRepository.findFutureBookings(userId);
+            case WAITING -> bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+            case REJECTED -> bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
+            default -> bookingRepository.findByBookerIdOrderByStartDesc(userId);
+        };
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Booking> getBookingsForOwner(Long userId, String state) {
-        return bookingRepository.findBookingsByOwnerIdAndState(userId, state);
+    public List<Booking> getBookingsForOwner(Long userId, BookingState state) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException();
+        }
+
+        switch (state) {
+            case CURRENT:
+                return bookingRepository.findCurrentBookingsForOwner(userId);
+            case PAST:
+                return bookingRepository.findPastBookingsForOwner(userId);
+            case FUTURE:
+                return bookingRepository.findFutureBookingsForOwner(userId);
+            case WAITING:
+                return bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+            case REJECTED:
+                return bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
+            case ALL:
+            default:
+                return bookingRepository.findByItemOwnerIdOrderByStartDesc(userId);
+        }
     }
 }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.mapper;
 
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -19,7 +20,7 @@ public class BookingMapper {
         booking.setBooker(new User());
         booking.getBooker().setId(bookingDto.getBookerId());
 
-        booking.setStatus(bookingDto.getStatus() != null ? bookingDto.getStatus() : Booking.Status.WAITING);
+        booking.setStatus(bookingDto.getStatus() != null ? bookingDto.getStatus() : BookingStatus.WAITING);
 
         return booking;
     }

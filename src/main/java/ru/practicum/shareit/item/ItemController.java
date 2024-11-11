@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
@@ -42,19 +44,27 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDto> getItem(@PathVariable Long itemId) {
-        Item item = itemService.getItem(itemId);
-        return ResponseEntity.ok(ItemMapper.toItemDto(item));
+        ItemDto itemDto = itemService.getItem(itemId);
+        return ResponseEntity.ok(itemDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemDto>> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        List<Item> items = itemService.getAllItems(userId);
-        return ResponseEntity.ok(ItemMapper.toItemDtoList(items));
+    public ResponseEntity<List<ItemWithBookingsDto>> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        List<ItemWithBookingsDto> items = itemService.getAllItems(userId);
+        return ResponseEntity.ok(items);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> searchItems(@RequestParam String text) {
         List<Item> items = itemService.searchItems(text);
         return ResponseEntity.ok(ItemMapper.toItemDtoList(items));
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<CommentDto> addComment(@PathVariable Long itemId,
+                                                 @RequestHeader("X-Sharer-User-Id") Long userId,
+                                                 @Valid @RequestBody CommentDto commentDto) {
+        CommentDto createdComment = itemService.addComment(itemId, userId, commentDto);
+        return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
     }
 }

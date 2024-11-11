@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDTO;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingState;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,37 +32,45 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<BookingDto> confirmBooking(@PathVariable Long bookingId,
+    public ResponseEntity<BookingResponseDTO> confirmBooking(@PathVariable Long bookingId,
                                                      @RequestHeader("X-Sharer-User-Id") Long userId,
                                                      @RequestParam Boolean approved) {
-        Booking confirmedBooking = bookingService.confirmBooking(bookingId, userId, approved);
-        return ResponseEntity.ok(BookingMapper.toBookingDto(confirmedBooking));
+        Booking booking = bookingService.confirmBooking(bookingId, userId, approved);
+
+        BookingResponseDTO response = new BookingResponseDTO(booking);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<BookingDto> getBooking(@PathVariable Long bookingId,
+    public ResponseEntity<BookingResponseDTO> getBooking(@PathVariable Long bookingId,
                                                  @RequestHeader("X-Sharer-User-Id") Long userId) {
         Booking booking = bookingService.getBooking(bookingId, userId);
-        return ResponseEntity.ok(BookingMapper.toBookingDto(booking));
+        BookingResponseDTO response = new BookingResponseDTO(booking);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<BookingDto>> getAllBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                           @RequestParam(defaultValue = "ALL") String state) {
+    public ResponseEntity<List<BookingResponseDTO>> getAllBookings(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(defaultValue = "ALL") BookingState state) {
         List<Booking> bookings = bookingService.getAllBookings(userId, state);
-        List<BookingDto> bookingDtos = bookings.stream()
-                .map(BookingMapper::toBookingDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(bookingDtos);
+        List<BookingResponseDTO> bookingResponseDtos = bookings.stream()
+                .map(BookingResponseDTO::new)
+                .toList();
+        return ResponseEntity.ok(bookingResponseDtos);
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<List<BookingDto>> getBookingsForOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                                @RequestParam(defaultValue = "ALL") String state) {
+    public ResponseEntity<List<BookingResponseDTO>> getBookingsForOwner(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(defaultValue = "ALL") BookingState state) {
+
         List<Booking> bookings = bookingService.getBookingsForOwner(userId, state);
-        List<BookingDto> bookingDtos = bookings.stream()
-                .map(BookingMapper::toBookingDto)
+
+        List<BookingResponseDTO> bookingResponseDtos = bookings.stream()
+                .map(BookingResponseDTO::new)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(bookingDtos);
+
+        return ResponseEntity.ok(bookingResponseDtos);
     }
 }
