@@ -2,7 +2,7 @@ package ru.practicum.shareit.request;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Data
-@Table(name = "requests") // Указываем имя таблицы
+@Table(name = "requests")
 public class ItemRequest {
 
     @Id
@@ -23,7 +23,7 @@ public class ItemRequest {
 
     @ManyToOne
     @JoinColumn(name = "requestor_id", nullable = false)
-    private User requestor; // Пользователь, который запрашивает вещь\
+    private User requestor; // Пользователь, который запрашивает вещь
 
     @Column(name = "created", nullable = false, updatable = false)
     private LocalDateTime created; // Дата и время создания запроса

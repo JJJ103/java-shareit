@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import ru.practicum.shareit.user.dto.UserDto;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 
 /**
  * TODO Sprint add-controllers.

@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 /**
  * TODO Sprint add-controllers.
@@ -35,5 +35,9 @@ public class Item {
 
     public Boolean isAvailable() {
         return available;
+    }
+
+    public Long getRequestId() {
+        return (request != null) ? request.getId() : null;
     }
 }

@@ -3,18 +3,18 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exceptions.BookingNotFoundException;
+import ru.practicum.shareit.exceptions.BookingUnavailableException;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,20 +27,20 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public Booking createBooking(Long userId, BookingDto bookingDto) {
-        // Получаем пользователя по userId
         User booker = userRepository.findById(userId)
-                .orElseThrow(() -> new BookingNotFoundException("User not found"));
+                .orElseThrow(BookingNotFoundException::new);
 
-        // Получаем item по itemId из тела запроса
         Item item = itemRepository.findById(bookingDto.getItemId())
-                .orElseThrow(() -> new BookingNotFoundException("Item not found"));
+                .orElseThrow(BookingNotFoundException::new);
 
-        // Проверяем, что текущий пользователь не является владельцем предмета
         if (item.getOwner().getId().equals(booker.getId())) {
-            throw new ForbiddenException("You cannot book your own item");
+            throw new ForbiddenException();
         }
 
-        // Преобразуем BookingDto в сущность Booking
+        if (!item.getAvailable()) {
+            throw new BookingUnavailableException();
+        }
+
         Booking booking = BookingMapper.toBooking(bookingDto);
         booking.setStart(bookingDto.getStart());
         booking.setEnd(bookingDto.getEnd());
@@ -48,7 +48,6 @@ public class BookingServiceImpl implements BookingService {
         booking.setBooker(booker);
         booking.setStatus(Booking.Status.WAITING);
 
-        // Сохраняем бронирование в базе данных
         return bookingRepository.save(booking);
     }
 
