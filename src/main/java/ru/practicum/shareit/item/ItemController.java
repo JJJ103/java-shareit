@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
@@ -43,14 +43,14 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDto> getItem(@PathVariable Long itemId) {
-        ItemDto itemDto = itemService.getItem(itemId);
-        return ResponseEntity.ok(itemDto);
+    public ResponseEntity<ItemResponseDto> getItem(@PathVariable Long itemId) {
+        ItemResponseDto itemResponseDto = itemService.getItem(itemId);
+        return ResponseEntity.ok(itemResponseDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemWithBookingsDto>> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        List<ItemWithBookingsDto> items = itemService.getAllItems(userId);
+    public ResponseEntity<List<ItemResponseDto>> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        List<ItemResponseDto> items = itemService.getAllItems(userId);
         return ResponseEntity.ok(items);
     }
 

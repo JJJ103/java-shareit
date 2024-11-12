@@ -6,11 +6,17 @@ import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findByItemIdAndStatus(Long itemId, BookingStatus status);
+    Booking findTopByItemIdAndStartAfterOrderByStartAsc(Long itemId, LocalDateTime now);
+
+    Booking findTopByItemIdAndEndAfterOrderByEndDesc(Long itemId, LocalDateTime now);
+
+    boolean existsByItemIdAndBookerIdAndStatusAndEndBefore(Long itemId, Long bookerId, BookingStatus status, LocalDateTime end);
 
     List<Booking> findByBookerIdOrderByStartDesc(Long bookerId);
 
