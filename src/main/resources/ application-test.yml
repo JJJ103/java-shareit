@@ -6,13 +6,13 @@ spring:
   main:
     banner-mode: OFF
   datasource:
-    username: shareit.test
-    password: shareit.test
+    username: dbuser
+    password: 12345
     url: jdbc:h2:mem:shareit;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
