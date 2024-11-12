@@ -7,8 +7,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@ActiveProfiles("test")
+@SpringBootTest(classes = ShareItApp.class, properties = "spring.profiles.active=test")
 class ShareItTests {
 
 	@Test
