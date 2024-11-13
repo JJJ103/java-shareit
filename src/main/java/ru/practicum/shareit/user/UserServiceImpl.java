@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.user.model.User;
 
 @Service
 @RequiredArgsConstructor
@@ -15,34 +16,40 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException();
         }
-        return userRepository.createUser(user);
+        return userRepository.save(user);
     }
 
     @Override
     public User updateUser(Long id, User user) {
-        if (userRepository.getUser(id) == null) {
-            throw new UserNotFoundException();
-        }
-        if (userRepository.existsByEmail(user.getEmail())) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+        if (user.getEmail() != null && !user.getEmail().equals(existingUser.getEmail())
+                && userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException();
         }
-        return userRepository.updateUser(id, user);
+
+        if (user.getName() != null) {
+            existingUser.setName(user.getName());
+        }
+        if (user.getEmail() != null) {
+            existingUser.setEmail(user.getEmail());
+        }
+
+        return userRepository.save(existingUser);
     }
 
     @Override
     public User getUser(Long id) {
-        User user = userRepository.getUser(id);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-        return user;
+        return userRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Override
     public boolean deleteUser(Long id) {
-        if (userRepository.getUser(id) == null) {
+        if (!userRepository.existsById(id)) {
             throw new UserNotFoundException();
         }
-        return userRepository.deleteUser(id);
+        userRepository.deleteById(id);
+        return true;
     }
 }
