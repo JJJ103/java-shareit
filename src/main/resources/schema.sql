@@ -1,0 +1,51 @@
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT AUTO_INCREMENT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(512) NOT NULL,
+  CONSTRAINT pk_user PRIMARY KEY (id),
+  CONSTRAINT uq_user_email UNIQUE (email)
+);
+
+CREATE TABLE IF NOT EXISTS requests (
+  id BIGINT AUTO_INCREMENT NOT NULL,
+  description VARCHAR(255) NOT NULL,
+  requestor_id BIGINT NOT NULL,
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  CONSTRAINT pk_request PRIMARY KEY (id),
+  CONSTRAINT fk_requestor FOREIGN KEY (requestor_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS items (
+  id BIGINT AUTO_INCREMENT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description VARCHAR(255),
+  available BOOLEAN DEFAULT TRUE,
+  owner_id BIGINT NOT NULL,
+  request_id BIGINT,
+  CONSTRAINT pk_item PRIMARY KEY (id),
+  CONSTRAINT fk_owner_item FOREIGN KEY (owner_id) REFERENCES users(id),
+  CONSTRAINT fk_request_item FOREIGN KEY (request_id) REFERENCES requests(id)
+);
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id BIGINT AUTO_INCREMENT NOT NULL,
+  start_date TIMESTAMP NOT NULL,
+  end_date TIMESTAMP NOT NULL,
+  item_id BIGINT NOT NULL,
+  booker_id BIGINT NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  CONSTRAINT pk_booking PRIMARY KEY (id),
+  CONSTRAINT fk_item_booking FOREIGN KEY (item_id) REFERENCES items(id),
+  CONSTRAINT fk_booker_booking FOREIGN KEY (booker_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+  id BIGINT AUTO_INCREMENT NOT NULL,
+  text VARCHAR(255) NOT NULL,
+  item_id BIGINT NOT NULL,
+  author_id BIGINT NOT NULL,
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  CONSTRAINT pk_comment PRIMARY KEY (id),
+  CONSTRAINT fk_item_comment FOREIGN KEY (item_id) REFERENCES items(id),
+  CONSTRAINT fk_author_comment FOREIGN KEY (author_id) REFERENCES users(id)
+);
