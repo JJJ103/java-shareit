@@ -1,26 +1,39 @@
 package ru.practicum.shareit.request.mapper;
 
-import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemRequestMapper {
-    public static ItemRequestDto toDto(ItemRequest request) {
-        ItemRequestDto dto = new ItemRequestDto();
-        dto.setId(request.getId());
-        dto.setDescription(request.getDescription());
-        dto.setRequestorId(request.getRequestor().getId());
-        dto.setCreated(request.getCreated());
-        return dto;
+
+    public static ItemRequestDto toItemRequestDto(ItemRequest request) {
+        return new ItemRequestDto(
+                request.getId(),
+                request.getDescription(),
+                request.getRequestor().getId(),
+                request.getCreated()
+        );
     }
 
-    public static ItemRequest toEntity(ItemRequestDto dto, User requestor) {
+    public static ItemRequest toItemRequest(ItemRequestDto dto) {
         ItemRequest request = new ItemRequest();
         request.setDescription(dto.getDescription());
-        request.setRequestor(requestor);
-        request.setCreated(LocalDateTime.now());
+
+        request.setRequestor(new User());
+        request.getRequestor().setId(dto.getRequestorId());
+
+        request.setCreated(dto.getCreated() != null ? dto.getCreated() : LocalDateTime.now());
         return request;
+    }
+
+    public static List<ItemRequestDto> toItemRequestDtoList(List<ItemRequest> requests) {
+        return requests.stream()
+                .map(ItemRequestMapper::toItemRequestDto)
+                .collect(Collectors.toList());
     }
 }

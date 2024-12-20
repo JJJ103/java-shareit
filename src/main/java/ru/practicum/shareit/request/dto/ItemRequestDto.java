@@ -13,9 +13,14 @@ import java.time.LocalDateTime;
 public class ItemRequestDto {
     private Long id;
     private String description;
-    @NotNull
     private Long requestorId; // айди пользователя, который запрашивает вещь
-    @NotNull
     @PastOrPresent
     private LocalDateTime created;
+
+    public ItemRequestDto(Long id, String description, Long requestorId, LocalDateTime created) {
+        this.id = id;
+        this.description = description;
+        this.requestorId = requestorId;
+        this.created = created;
+    }
 }
