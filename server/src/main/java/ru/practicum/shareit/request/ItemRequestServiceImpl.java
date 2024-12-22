@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
-import ru.practicum.shareit.exceptions.RequestNotFoundException;
+import ru.practicum.shareit.exceptions.ItemRequestNotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -62,7 +62,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestResponseDto getRequest(Long requestId, Long userId) {
         ItemRequest request = requestRepository.findById(requestId)
-                .orElseThrow(RequestNotFoundException::new);
+                .orElseThrow(ItemRequestNotFoundException::new);
 
         List<Item> items = itemRepository.findByRequest_Id(requestId);
         List<ItemSummaryDto> itemSummaries = items.stream()
