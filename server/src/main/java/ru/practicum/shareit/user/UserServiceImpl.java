@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.EmailAlreadyExistsException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 @Service
@@ -12,7 +14,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User createUser(User user) {
+    public User createUser(UserDto userDto) {
+        User user = UserMapper.toUser(userDto);
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new EmailAlreadyExistsException();
         }
@@ -20,7 +23,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(Long id, User user) {
+    public User updateUser(Long id, UserDto userDto) {
+        User user = UserMapper.toUser(userDto);
         User existingUser = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
         if (user.getEmail() != null && !user.getEmail().equals(existingUser.getEmail())

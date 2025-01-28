@@ -29,7 +29,7 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemDto> createItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                              @Valid @RequestBody ItemDto itemDto) {
+                                              @RequestBody ItemDto itemDto) {
         Item createdItem = itemService.createItem(userId, itemDto);
         return new ResponseEntity<>(ItemMapper.toItemDto(createdItem), HttpStatus.CREATED);
     }
@@ -63,7 +63,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<CommentDto> addComment(@PathVariable Long itemId,
                                                  @RequestHeader("X-Sharer-User-Id") Long userId,
-                                                 @Valid @RequestBody CommentDto commentDto) {
+                                                 @RequestBody CommentDto commentDto) {
         CommentDto createdComment = itemService.addComment(itemId, userId, commentDto);
         return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
     }
