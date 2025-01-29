@@ -30,12 +30,10 @@ class UserControllerTest {
 
     @Test
     void createUser_ShouldReturn201() throws Exception {
-        String jsonRequest = """
-                {
-                "name": "Alice",
-                "email": "alice@example.com"
-                }
-                """;
+        String jsonRequest = "{"
+                + "\"name\": \"Alice\","
+                + "\"email\": \"alice@example.com\""
+                + "}";
 
         when(userClient.createUser(any(UserDto.class)))
                 .thenReturn(ResponseEntity.status(201).build());
@@ -48,12 +46,10 @@ class UserControllerTest {
 
     @Test
     void updateUser_ShouldReturn200() throws Exception {
-        String jsonRequest = """
-            {
-                "name": "Updated Name",
-                "email": "updated@example.com"
-            }
-        """;
+        String jsonRequest = "{"
+                + "\"name\": \"Updated Name\","
+                + "\"email\": \"updated@example.com\""
+                + "}";
 
         when(userClient.updateUser(anyLong(), any(UserDto.class)))
                 .thenReturn(ResponseEntity.ok().build());

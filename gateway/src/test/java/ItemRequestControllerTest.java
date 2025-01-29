@@ -30,11 +30,9 @@ class ItemRequestControllerTest {
 
     @Test
     void createRequest_ShouldReturn201() throws Exception {
-        String jsonRequest = """
-                {
-                "description": "Need a laptop"
-                }
-                """;
+        String jsonRequest = "{"
+                + "\"description\": \"Need a laptop\""
+                + "}";
 
         when(itemRequestClient.createRequest(anyLong(), any(ItemRequestDto.class)))
                 .thenReturn(ResponseEntity.status(201).build());
