@@ -22,13 +22,11 @@ public class ItemRequestController {
         return itemRequestClient.createRequest(userId, requestDto);
     }
 
-    // Получение запросов конкретного пользователя
     @GetMapping
     public ResponseEntity<Object> getUserRequests(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemRequestClient.getUserRequests(userId);
     }
 
-    // Получение всех запросов с учетом пагинации
     @GetMapping("/all")
     public ResponseEntity<Object> getAllRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                  @RequestParam(name = "from", defaultValue = "0") Integer from,
@@ -36,7 +34,6 @@ public class ItemRequestController {
         return itemRequestClient.getAllRequests(userId, from, size);
     }
 
-    // Получение конкретного запроса
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getRequest(@PathVariable Long requestId,
                                              @RequestHeader("X-Sharer-User-Id") Long userId) {
