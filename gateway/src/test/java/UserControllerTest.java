@@ -31,8 +31,10 @@ class UserControllerTest {
     @Test
     void createUser_ShouldReturn201() throws Exception {
         String jsonRequest = """
-                {"name": "Alice",
-                "email": "alice@example.com"}
+                {
+                "name": "Alice",
+                "email": "alice@example.com"
+                }
                 """;
 
         when(userClient.createUser(any(UserDto.class)))
@@ -45,11 +47,47 @@ class UserControllerTest {
     }
 
     @Test
+    void updateUser_ShouldReturn200() throws Exception {
+        String jsonRequest = """
+            {
+                "name": "Updated Name",
+                "email": "updated@example.com"
+            }
+        """;
+
+        when(userClient.updateUser(anyLong(), any(UserDto.class)))
+                .thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(patch("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void getUser_ShouldReturn200() throws Exception {
         when(userClient.getUser(anyLong()))
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(get("/users/1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteUser_ShouldReturn200() throws Exception {
+        when(userClient.deleteUser(anyLong()))
+                .thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(delete("/users/1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllUsers_ShouldReturn200() throws Exception {
+        when(userClient.getAllUsers())
+                .thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/users"))
                 .andExpect(status().isOk());
     }
 }

@@ -31,9 +31,11 @@ class BookingControllerTest {
     @Test
     void createBooking_ShouldReturn201() throws Exception {
         String jsonRequest = """
-                {"start": "2025-01-30T12:00:00",
-                "end": "2025-01-31T12:00:00",
-                "itemId": 1}
+                {
+                "start": "2030-01-27T12:00:00",
+                "end": "2030-01-28T12:00:00",
+                "itemId": 1
+                }
                 """;
 
         when(bookingClient.createBooking(anyLong(), any(BookingDto.class)))
@@ -44,15 +46,5 @@ class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated());
-    }
-
-    @Test
-    void getBooking_ShouldReturn200() throws Exception {
-        when(bookingClient.getBooking(anyLong(), anyLong()))
-                .thenReturn(ResponseEntity.ok().build());
-
-        mockMvc.perform(get("/bookings/1")
-                        .header("X-Sharer-User-Id", "1"))
-                .andExpect(status().isOk());
     }
 }

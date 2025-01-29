@@ -31,8 +31,9 @@ class ItemRequestControllerTest {
     @Test
     void createRequest_ShouldReturn201() throws Exception {
         String jsonRequest = """
-                {"description": "Need a laptop",
-                "created": "2025-01-27T12:00:00"}
+                {
+                "description": "Need a laptop"
+                }
                 """;
 
         when(itemRequestClient.createRequest(anyLong(), any(ItemRequestDto.class)))
