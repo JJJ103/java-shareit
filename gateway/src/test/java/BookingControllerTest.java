@@ -31,12 +31,10 @@ class BookingControllerTest {
     @Test
     void createBooking_ShouldReturn201() throws Exception {
         String jsonRequest = """
-            {
-                "start": "2025-01-30T12:00:00",
+                {"start": "2025-01-30T12:00:00",
                 "end": "2025-01-31T12:00:00",
-                "itemId": 1
-            }
-        """;
+                "itemId": 1}
+                """;
 
         when(bookingClient.createBooking(anyLong(), any(BookingDto.class)))
                 .thenReturn(ResponseEntity.status(201).build());

@@ -31,11 +31,9 @@ class UserControllerTest {
     @Test
     void createUser_ShouldReturn201() throws Exception {
         String jsonRequest = """
-            {
-                "name": "Alice",
-                "email": "alice@example.com"
-            }
-        """;
+                {"name": "Alice",
+                "email": "alice@example.com"}
+                """;
 
         when(userClient.createUser(any(UserDto.class)))
                 .thenReturn(ResponseEntity.status(201).build());
