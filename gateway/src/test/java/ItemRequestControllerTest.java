@@ -30,9 +30,7 @@ class ItemRequestControllerTest {
 
     @Test
     void createRequest_ShouldReturn201() throws Exception {
-        String jsonRequest = "{"
-                + "\"description\": \"Need a laptop\""
-                + "}";
+        String jsonRequest = "{ \"description\": \"Need a laptop\" }";
 
         when(itemRequestClient.createRequest(anyLong(), any(ItemRequestDto.class)))
                 .thenReturn(ResponseEntity.status(201).build());
@@ -50,6 +48,28 @@ class ItemRequestControllerTest {
                 .thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id", "1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllRequests_ShouldReturn200() throws Exception {
+        when(itemRequestClient.getAllRequests(anyLong(), anyInt(), anyInt()))
+                .thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", "1")
+                        .param("from", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getRequest_ShouldReturn200() throws Exception {
+        when(itemRequestClient.getRequest(anyLong(), anyLong()))
+                .thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/requests/1")
                         .header("X-Sharer-User-Id", "1"))
                 .andExpect(status().isOk());
     }

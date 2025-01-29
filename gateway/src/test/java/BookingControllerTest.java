@@ -45,4 +45,51 @@ class BookingControllerTest {
                         .content(jsonRequest))
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    void confirmBooking_ShouldReturn200() throws Exception {
+        when(bookingClient.confirmBooking(anyLong(), anyLong(), anyBoolean()))
+                .thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(patch("/bookings/1")
+                        .header("X-Sharer-User-Id", "1")
+                        .param("approved", "true"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getBooking_ShouldReturn200() throws Exception {
+        when(bookingClient.getBooking(anyLong(), anyLong()))
+                .thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/bookings/1")
+                        .header("X-Sharer-User-Id", "1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllBookings_ShouldReturn200() throws Exception {
+        when(bookingClient.getAllBookings(anyLong(), anyString(), anyInt(), anyInt()))
+                .thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", "1")
+                        .param("state", "ALL")
+                        .param("from", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getBookingsForOwner_ShouldReturn200() throws Exception {
+        when(bookingClient.getBookingsForOwner(anyLong(), anyString(), anyInt(), anyInt()))
+                .thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", "1")
+                        .param("state", "ALL")
+                        .param("from", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk());
+    }
 }
