@@ -11,10 +11,13 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exceptions.BookingNotFoundException;
+import ru.practicum.shareit.exceptions.BookingUnavailableException;
+import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.exceptions.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -102,5 +105,71 @@ class BookingServiceTest {
         List<Booking> bookings = bookingService.getAllBookings(user.getId(), BookingState.ALL);
 
         assertFalse(bookings.isEmpty());
+    }
+
+    @Test
+    void createBooking_ShouldThrowException_WhenUserNotFound() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        BookingDto dto = new BookingDto();
+        dto.setItemId(1L);
+
+        assertThrows(BookingNotFoundException.class, () -> bookingService.createBooking(99L, dto));
+        verify(bookingRepository, never()).save(any());
+    }
+
+    @Test
+    void createBooking_ShouldThrowForbiddenException_WhenItemOwnerIsSameAsBooker() {
+        User owner = new User(1L, "Alice", "a@ex.com");
+        Item item = new Item(1L, "Drill", "desc", true, owner, null);
+
+        when(userRepository.findById(owner.getId())).thenReturn(Optional.of(owner));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+
+        BookingDto dto = new BookingDto();
+        dto.setItemId(item.getId());
+
+        assertThrows(ForbiddenException.class, () -> bookingService.createBooking(owner.getId(), dto));
+        verify(bookingRepository, never()).save(any());
+    }
+
+    @Test
+    void createBooking_ShouldThrowBookingUnavailableException_WhenItemNotAvailable() {
+        User booker = new User(2L, "Bob", "bob@ex.com");
+        Item item = new Item(1L, "Drill", "desc", false, new User(1L, "Alice", "a@ex.com"), null);
+
+        when(userRepository.findById(booker.getId())).thenReturn(Optional.of(booker));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+
+        BookingDto dto = new BookingDto();
+        dto.setItemId(item.getId());
+
+        assertThrows(BookingUnavailableException.class, () -> bookingService.createBooking(booker.getId(), dto));
+        verify(bookingRepository, never()).save(any());
+    }
+
+    @Test
+    void confirmBooking_ShouldRemainApproved_WhenApprovedAlready() {
+        Booking existing = new Booking();
+        existing.setId(5L);
+        existing.setStatus(BookingStatus.WAITING);
+        User owner = new User(3L, "Owner", "own@ex.com");
+        Item item = new Item();
+        item.setId(10L);
+        item.setOwner(owner);
+        existing.setItem(item);
+
+        when(bookingRepository.findById(existing.getId())).thenReturn(Optional.of(existing));
+        when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Booking result = bookingService.confirmBooking(existing.getId(), owner.getId(), false);
+        assertEquals(BookingStatus.REJECTED, result.getStatus());
+    }
+
+    @Test
+    void getBookingsForOwner_ShouldThrowUserNotFound_WhenUserNotExists() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(UserNotFoundException.class, () -> bookingService.getBookingsForOwner(99L, BookingState.ALL));
+        verify(bookingRepository, never()).findByItemOwnerIdOrderByStartDesc(anyLong());
     }
 }
