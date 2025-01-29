@@ -25,8 +25,12 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> confirmBooking(Long bookingId, Long userId, Boolean approved) {
-        String path = serverUrl + API_PREFIX + "/" + bookingId + "?approved=" + approved;
-        return patch(path, userId);
+        Map<String, Object> params = Map.of(
+                "bookingId", bookingId,
+                "approved", approved
+        );
+        String path = serverUrl + API_PREFIX + "/{bookingId}?approved={approved}";
+        return patch(path, userId, params, null);
     }
 
     public ResponseEntity<Object> getBooking(Long bookingId, Long userId) {

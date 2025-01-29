@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request;
 
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +26,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ResponseEntity<ItemRequestDto> createRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                        @Valid @RequestBody ItemRequestDto requestDto) {
+                                                        @RequestBody ItemRequestDto requestDto) {
         ItemRequest request = requestService.createRequest(userId, requestDto);
         return new ResponseEntity<>(ItemRequestMapper.toItemRequestDto(request), HttpStatus.CREATED);
     }
