@@ -49,7 +49,7 @@ class BookingServiceTest {
     @BeforeEach
     void setUp() {
         user = new User(1L, "Alice", "alice@example.com");
-        User booker = new User(2L, "Bob", "bob@example.com"); // Новый пользователь
+        User booker = new User(2L, "Bob", "bob@example.com");
 
         item = new Item(1L, "Drill", "Powerful drill", true, user, null);
         bookingDto = new BookingDto(1L, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2), item.getId(), booker.getId(), BookingStatus.WAITING);
