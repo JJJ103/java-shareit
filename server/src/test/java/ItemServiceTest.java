@@ -122,11 +122,19 @@ class ItemServiceTest {
     void addComment_ShouldThrowBookingNotApprovedException_IfNoApprovedBooking() {
         when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(bookingRepository.existsByItemIdAndBookerIdAndStatusAndEndBefore(item.getId(), user.getId(), BookingStatus.APPROVED, LocalDateTime.now()))
+
+        LocalDateTime now = LocalDateTime.now();
+
+        when(bookingRepository.existsByItemIdAndBookerIdAndStatusAndEndBefore(
+                eq(item.getId()), eq(user.getId()), eq(BookingStatus.APPROVED), any(LocalDateTime.class)))
                 .thenReturn(false);
 
         CommentDto commentDto = new CommentDto(null, "Nice item", user.getName(), null);
-        assertThrows(BookingNotApprovedException.class, () -> itemService.addComment(item.getId(), user.getId(), commentDto));
+
+        assertThrows(BookingNotApprovedException.class, () ->
+                itemService.addComment(item.getId(), user.getId(), commentDto)
+        );
+
         verify(commentRepository, never()).save(any());
     }
 
