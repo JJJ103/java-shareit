@@ -44,5 +44,7 @@ public class Item {
     public Long getRequestId() {
         return (request != null) ? request.getId() : null;
     }
-    public Item() {}
+    public Item() {
+
+    }
 }
