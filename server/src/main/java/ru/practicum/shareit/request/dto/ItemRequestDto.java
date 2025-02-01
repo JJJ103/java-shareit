@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request.dto;
 
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -13,7 +12,6 @@ public class ItemRequestDto {
     private Long id;
     private String description;
     private Long requestorId; // айди пользователя, который запрашивает вещь
-    @PastOrPresent
     private LocalDateTime created;
 
     public ItemRequestDto(Long id, String description, Long requestorId, LocalDateTime created) {
