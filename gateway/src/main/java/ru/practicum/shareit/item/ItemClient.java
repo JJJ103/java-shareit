@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class ItemClient extends BaseClient {
     private static final String API_PREFIX = "/items";
     private final String serverUrl;
 
+    @Autowired
     public ItemClient(@Value("${shareit-server.url}") String serverUrl, RestTemplate restTemplate) {
         super(restTemplate);
         this.serverUrl = serverUrl;

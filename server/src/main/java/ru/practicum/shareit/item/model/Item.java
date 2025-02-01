@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
@@ -14,6 +15,7 @@ import ru.practicum.shareit.user.model.User;
 @Setter
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "items")
 public class Item {
     @Id
@@ -43,9 +45,5 @@ public class Item {
 
     public Long getRequestId() {
         return (request != null) ? request.getId() : null;
-    }
-
-    public Item() {
-
     }
 }

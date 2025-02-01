@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ public class UserClient extends BaseClient {
     private static final String API_PREFIX = "/users";
     private final String serverUrl;
 
+    @Autowired
     public UserClient(@Value("${shareit-server.url}") String serverUrl,
                       RestTemplate restTemplate) {
         super(restTemplate);
